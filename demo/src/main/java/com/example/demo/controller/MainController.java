@@ -17,7 +17,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -26,7 +25,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 
@@ -37,10 +35,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
+
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
 
 public class MainController implements Initializable {
 
@@ -50,7 +46,7 @@ public class MainController implements Initializable {
     @FXML private HBox navBar;
 
     // Navigasyon
-    @FXML private ToggleButton btnDashboard, btnGiris, btnKamyon, btnSorgulama, btnRota, btnBst;
+    @FXML private ToggleButton btnDashboard, btnGiris, btnKamyon, btnSorgulama, btnRota, btnBst, btnRaporlar, btnMusteriler, btnBakim, btnFaturalar;
     @FXML private VBox dashboardPanel, kargoGirisPanel, kamyonPanel, sorgulamaPanel, rotaPanel, bstPanel;
     private ToggleGroup toggleGroup;
 
@@ -78,6 +74,29 @@ public class MainController implements Initializable {
 
     // BST Liste
     @FXML private VBox bstListeBox;
+
+    // Raporlar Paneli
+    @FXML private VBox raporlarPanel;
+    @FXML private TabPane raporTabPane;
+
+    // Müşteriler Paneli
+    @FXML private VBox musterilerPanel;
+    @FXML private VBox musteriListBox;
+    @FXML private Button musteriYenileBtn;
+
+    // Bakım Paneli
+    @FXML private VBox bakimPanel;
+    @FXML private ComboBox<String> bakimKamyonCombo;
+    @FXML private VBox bakimListBox;
+    @FXML private ListView<String> bakimListView;
+    @FXML private Button bakimYenileBtn;
+
+    // Faturalar Paneli
+    @FXML private VBox faturalarPanel;
+    @FXML private TextField faturaKargoIdField;
+    @FXML private Label faturaSonucLabel;
+    @FXML private VBox faturaListBox;
+    @FXML private Button faturaSorgulaBtn;
 
     // Rota için trafik kontrolü (dinamik rota)
     private DatePicker tarihPicker;
@@ -121,6 +140,10 @@ public class MainController implements Initializable {
         btnSorgulama.setToggleGroup(toggleGroup);
         btnRota.setToggleGroup(toggleGroup);
         btnBst.setToggleGroup(toggleGroup);
+        btnRaporlar.setToggleGroup(toggleGroup);
+        btnBakim.setToggleGroup(toggleGroup);
+        btnMusteriler.setToggleGroup(toggleGroup);
+        btnFaturalar.setToggleGroup(toggleGroup);
         toggleGroup.selectedToggleProperty().addListener((obs, o, n) -> {
             if (n == null) o.setSelected(true);
         });
@@ -167,20 +190,8 @@ public class MainController implements Initializable {
         simBox.setStyle("-fx-background-color: #1e293b; -fx-background-radius: 8;");
         kamyonPanel.getChildren().add(0, simBox);
 
-        // Ana menüye "Raporlar", "Müşteriler", "Bakım", "Faturalar" butonlarını ekle (navBar'a)
-
-        Button raporBtn = new Button("Raporlar");
-        Button musteriBtn = new Button("Müşteriler");
-        Button bakimBtn = new Button("Bakım");
-        Button faturaBtn = new Button("Faturalar");
-        for (Button btn : new Button[]{raporBtn, musteriBtn, bakimBtn, faturaBtn}) {
-            btn.getStyleClass().add("nav-btn");
-        }
-        raporBtn.setOnAction(e -> onRaporlar());
-        musteriBtn.setOnAction(e -> onMusteriler());
-        bakimBtn.setOnAction(e -> onKamyonBakim());
-        faturaBtn.setOnAction(e -> onFaturalar());
-        navBar.getChildren().addAll(raporBtn, musteriBtn, bakimBtn, faturaBtn);
+        // Raporlar tablarını oluştur
+        raporTablariOlustur();
 
         // Başlangıç ekranı
         onDashboard();
@@ -194,6 +205,10 @@ public class MainController implements Initializable {
         sorgulamaPanel.setVisible(false);
         rotaPanel.setVisible(false);
         bstPanel.setVisible(false);
+        raporlarPanel.setVisible(false);
+        musterilerPanel.setVisible(false);
+        bakimPanel.setVisible(false);
+        faturalarPanel.setVisible(false);
     }
 
     private void gosterAnimasyonlu(VBox panel) {
@@ -534,16 +549,12 @@ public class MainController implements Initializable {
         }
     }
 
-    // ==================== RAPORLAR (1. Adım) ====================
+    //raporlar düğmesine basınca
     @FXML private void onRaporlar() {
-        Stage raporStage = new Stage();
-        raporStage.setTitle("Kargo Raporları ve İstatistikler");
-        raporStage.initModality(javafx.stage.Modality.NONE);
-        raporStage.setWidth(900);
-        raporStage.setHeight(700);
+        gosterAnimasyonlu(raporlarPanel);
+    }
 
-        TabPane tabPane = new TabPane();
-
+    private void raporTablariOlustur() {
         // Tab 1: Günlük/Haftalık/Aylık
         Tab tabGiris = new Tab("Kargo Giriş Grafiği");
         tabGiris.setClosable(false);
@@ -635,10 +646,7 @@ public class MainController implements Initializable {
         excelBox.getChildren().add(excelBtn);
         tabExcel.setContent(excelBox);
 
-        tabPane.getTabs().addAll(tabGiris, tabSure, tabBolge, tabExcel);
-        Scene scene = new Scene(tabPane);
-        raporStage.setScene(scene);
-        raporStage.show();
+        raporTabPane.getTabs().addAll(tabGiris, tabSure, tabBolge, tabExcel);
     }
 
     private void exportToExcel() {
@@ -706,73 +714,63 @@ public class MainController implements Initializable {
         maliyetTimeline.play();
     }
 
-    // ==================== MÜŞTERİ, BAKIM, FATURA PENCERELERİ (5. Adım) ====================
+    //müşteriler bakım fatura düğmelerine basınca
     @FXML private void onMusteriler() {
-        Stage stage = new Stage();
-        stage.setTitle("Müşteri Yönetimi");
-        VBox vbox = new VBox(10);
-        vbox.setPadding(new Insets(10));
-        ListView<String> listView = new ListView<>();
-        Button yenileBtn = new Button("Yenile");
-        yenileBtn.setOnAction(e -> {
-            try {
-                listView.getItems().clear();
-                for (Map<String, Object> m : servis.getDb().musterileriListele()) {
-                    listView.getItems().add(m.get("id") + " - " + m.get("ad_soyad") + " (" + m.get("telefon") + ")");
-                }
-            } catch (SQLException ex) { ex.printStackTrace(); }
-        });
-        yenileBtn.fire();
-        vbox.getChildren().addAll(yenileBtn, listView);
-        Scene scene = new Scene(vbox, 400, 500);
-        stage.setScene(scene);
-        stage.show();
+        gosterAnimasyonlu(musterilerPanel);
+        yenileMusteriler();
     }
 
-    @FXML private void onKamyonBakim() {
-        Stage stage = new Stage();
-        stage.setTitle("Kamyon Bakım Kayıtları");
-        VBox vbox = new VBox(10);
-        vbox.setPadding(new Insets(10));
-        ComboBox<String> kamyonCombo = new ComboBox<>();
-        for (Kamyon k : servis.getKamyonlar()) kamyonCombo.getItems().add(k.getId());
-        kamyonCombo.setPromptText("Kamyon seçin");
-        ListView<String> listView = new ListView<>();
-        Button yenileBtn = new Button("Yenile");
-        yenileBtn.setOnAction(e -> {
-            String kid = kamyonCombo.getValue();
-            if (kid == null) return;
-            try {
-                listView.getItems().clear();
-                for (Map<String, Object> b : servis.getDb().kamyonBakimListele(kid)) {
-                    listView.getItems().add(b.get("bakim_tarihi") + " - " + b.get("ariza") + " (" + b.get("ucret") + " TL)");
-                }
-            } catch (SQLException ex) { ex.printStackTrace(); }
-        });
-        vbox.getChildren().addAll(kamyonCombo, yenileBtn, listView);
-        Scene scene = new Scene(vbox, 500, 400);
-        stage.setScene(scene);
-        stage.show();
+    private void yenileMusteriler() {
+        musteriListBox.getChildren().clear();
+        try {
+            for (Map<String, Object> m : servis.getDb().musterileriListele()) {
+                Label lbl = new Label(m.get("id") + " - " + m.get("ad_soyad") + " (" + m.get("telefon") + ")");
+                lbl.setPadding(new Insets(6, 12, 6, 12));
+                lbl.setMaxWidth(Double.MAX_VALUE);
+                lbl.getStyleClass().add("kargo-satir");
+                musteriListBox.getChildren().add(lbl);
+            }
+        } catch (SQLException ex) { ex.printStackTrace(); }
+    }
+
+    @FXML private void onBakim() {
+        gosterAnimasyonlu(bakimPanel);
+        for (Kamyon k : servis.getKamyonlar()) bakimKamyonCombo.getItems().add(k.getId());
+    }
+    @FXML private void onBakimYenile() {
+        String kid = bakimKamyonCombo.getValue();
+        if (kid == null) return;
+        try {
+            bakimListView.getItems().clear();
+            for (Map<String, Object> b : servis.getDb().kamyonBakimListele(kid)) {
+                bakimListView.getItems().add(b.get("bakim_tarihi") + " - " + b.get("ariza") + " (" + b.get("ucret") + " TL)");
+            }
+        } catch (SQLException ex) { ex.printStackTrace(); }
+    }
+
+
+    private void yenileBakim() {
+        String kid = bakimKamyonCombo.getValue();
+        if (kid == null) return;
+        bakimListBox.getChildren().clear();
+        try {
+            for (Map<String, Object> b : servis.getDb().kamyonBakimListele(kid)) {
+                Label lbl = new Label(b.get("bakim_tarihi") + " - " + b.get("ariza") + " (" + b.get("ucret") + " TL)");
+                lbl.setPadding(new Insets(6, 12, 6, 12));
+                lbl.setMaxWidth(Double.MAX_VALUE);
+                lbl.getStyleClass().add("kargo-satir");
+                bakimListBox.getChildren().add(lbl);
+            }
+        } catch (SQLException ex) { ex.printStackTrace(); }
     }
 
     @FXML private void onFaturalar() {
-        Stage stage = new Stage();
-        stage.setTitle("Faturalar");
-        VBox vbox = new VBox(10);
-        vbox.setPadding(new Insets(10));
-        TextField kargoIdField = new TextField();
-        kargoIdField.setPromptText("Kargo ID");
-        Label sonuc = new Label();
-        Button sorgulaBtn = new Button("Sorgula");
-        // Basit bir sorgulama, fatura bilgilerini göstermek için ek bir metod yok. Göstermelik.
-        sorgulaBtn.setOnAction(e -> {
-            String kid = kargoIdField.getText();
-            sonuc.setText("Fatura detayları için özel bir sorgu eklenebilir. (Demo)");
-        });
-        vbox.getChildren().addAll(new Label("Fatura yönetimi (demo)"), kargoIdField, sorgulaBtn, sonuc);
-        Scene scene = new Scene(vbox, 400, 300);
-        stage.setScene(scene);
-        stage.show();
+        gosterAnimasyonlu(faturalarPanel);
+    }
+
+    private void sorgulaPatura() {
+        String kid = faturaKargoIdField.getText();
+        faturaSonucLabel.setText("Fatura detayları için özel bir sorgu eklenebilir. (Demo) - Kargo ID: " + kid);
     }
 
     // ==================== YARDIMCI METOTLAR ====================

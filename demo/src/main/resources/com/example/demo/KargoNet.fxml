@@ -1,33 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.canvas.Canvas?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.demo.controller.MainController"
-            styleClass="ana-ekran">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane styleClass="ana-ekran" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="com.example.demo.controller.MainController">
     <top>
         <VBox>
-            <HBox styleClass="header" alignment="CENTER_LEFT" spacing="12">
-                <padding><Insets top="14" right="24" bottom="14" left="24"/></padding>
-                <Text text="📦" style="-fx-font-size: 28px;"/>
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="header">
+                <padding><Insets bottom="14" left="24" right="24" top="14" /></padding>
+                <Text style="-fx-font-size: 28px;" text="📦" />
                 <VBox spacing="2">
-                    <Label text="KargoNet" styleClass="header-title"/>
-                    <Label text="Akilli Kargo Yonetim Sistemi - Java + Veri Yapilari" styleClass="header-sub"/>
+                    <Label styleClass="header-title" text="KargoNet" />
+                    <Label styleClass="header-sub" text="Akilli Kargo Yonetim Sistemi - Java + Veri Yapilari" />
                 </VBox>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label text="v1.0  |  HashMap - PriorityQueue - Stack - Graph - AVL-BST" styleClass="header-version"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label styleClass="header-version" text="v1.0  |  HashMap - PriorityQueue - Stack - Graph - AVL-BST" />
             </HBox>
-            <HBox fx:id="navBar" styleClass="navbar" alignment="CENTER_LEFT" spacing="4">
-                <padding><Insets top="0" right="16" bottom="0" left="16"/></padding>
-                <ToggleButton fx:id="btnDashboard" text="Dashboard" styleClass="nav-btn" selected="true" onAction="#onDashboard"/>
-                <ToggleButton fx:id="btnGiris"     text="Kargo Kabul"  styleClass="nav-btn" onAction="#onGiris"/>
-                <ToggleButton fx:id="btnKamyon"    text="Kamyonlar"    styleClass="nav-btn" onAction="#onKamyon"/>
-                <ToggleButton fx:id="btnSorgulama" text="Sorgulama"    styleClass="nav-btn" onAction="#onSorgulama"/>
-                <ToggleButton fx:id="btnRota"      text="Rota Haritasi" styleClass="nav-btn" onAction="#onRota"/>
-                <ToggleButton fx:id="btnBst"       text="BST Liste"    styleClass="nav-btn" onAction="#onBst"/>
+            <HBox fx:id="navBar" alignment="CENTER_LEFT" spacing="4" styleClass="navbar">
+                <padding><Insets bottom="0" left="16" right="16" top="0" /></padding>
+                <ToggleButton fx:id="btnDashboard" onAction="#onDashboard" selected="true" styleClass="nav-btn" text="Dashboard" />
+                <ToggleButton fx:id="btnGiris" onAction="#onGiris" styleClass="nav-btn" text="Kargo Kabul" />
+                <ToggleButton fx:id="btnKamyon" onAction="#onKamyon" styleClass="nav-btn" text="Kamyonlar" />
+                <ToggleButton fx:id="btnSorgulama" onAction="#onSorgulama" styleClass="nav-btn" text="Sorgulama" />
+                <ToggleButton fx:id="btnRota" onAction="#onRota" styleClass="nav-btn" text="Rota Haritasi" />
+                <ToggleButton fx:id="btnBst" onAction="#onBst" styleClass="nav-btn" text="BST Liste" />
+            <ToggleButton fx:id="btnRaporlar" onAction="#onRaporlar" styleClass="nav-btn" text="Raporlar" />
+            <ToggleButton fx:id="btnMusteriler" onAction="#onMusteriler" styleClass="nav-btn" text="Müşteriler" />
+            <ToggleButton fx:id="btnBakim" onAction="#onBakim" styleClass="nav-btn" text="Bakım" />
+            <ToggleButton fx:id="btnFaturalar" onAction="#onFaturalar" styleClass="nav-btn" text="Faturalar" />
             </HBox>
         </VBox>
     </top>
@@ -35,145 +52,211 @@
     <center>
         <StackPane fx:id="icerikAlani">
 
-            <VBox fx:id="dashboardPanel" styleClass="panel" spacing="20">
-                <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
-                <Label text="Genel Bakis" styleClass="panel-baslik"/>
-                <HBox spacing="16" alignment="CENTER_LEFT">
-                    <VBox styleClass="stat-kart" prefWidth="180" alignment="CENTER_LEFT" spacing="6" style="-fx-border-color: #3b82f6; -fx-border-width: 0 0 0 4;">
-                        <padding><Insets top="16" right="20" bottom="16" left="20"/></padding>
-                        <Label text="Toplam Kargo" styleClass="stat-baslik"/>
-                        <Label fx:id="lblToplamKargo" text="0" styleClass="stat-deger" style="-fx-text-fill: #3b82f6;"/>
+            <VBox fx:id="dashboardPanel" spacing="20" styleClass="panel">
+                <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+                <Label styleClass="panel-baslik" text="Genel Bakis" />
+                <HBox alignment="CENTER_LEFT" spacing="16">
+                    <VBox alignment="CENTER_LEFT" prefWidth="180" spacing="6" style="-fx-border-color: #3b82f6; -fx-border-width: 0 0 0 4;" styleClass="stat-kart">
+                        <padding><Insets bottom="16" left="20" right="20" top="16" /></padding>
+                        <Label styleClass="stat-baslik" text="Toplam Kargo" />
+                        <Label fx:id="lblToplamKargo" style="-fx-text-fill: #3b82f6;" styleClass="stat-deger" text="0" />
                     </VBox>
-                    <VBox styleClass="stat-kart" prefWidth="180" alignment="CENTER_LEFT" spacing="6" style="-fx-border-color: #f59e0b; -fx-border-width: 0 0 0 4;">
-                        <padding><Insets top="16" right="20" bottom="16" left="20"/></padding>
-                        <Label text="Depoda" styleClass="stat-baslik"/>
-                        <Label fx:id="lblDepodaki" text="0" styleClass="stat-deger" style="-fx-text-fill: #f59e0b;"/>
+                    <VBox alignment="CENTER_LEFT" prefWidth="180" spacing="6" style="-fx-border-color: #f59e0b; -fx-border-width: 0 0 0 4;" styleClass="stat-kart">
+                        <padding><Insets bottom="16" left="20" right="20" top="16" /></padding>
+                        <Label styleClass="stat-baslik" text="Depoda" />
+                        <Label fx:id="lblDepodaki" style="-fx-text-fill: #f59e0b;" styleClass="stat-deger" text="0" />
                     </VBox>
-                    <VBox styleClass="stat-kart" prefWidth="180" alignment="CENTER_LEFT" spacing="6" style="-fx-border-color: #8b5cf6; -fx-border-width: 0 0 0 4;">
-                        <padding><Insets top="16" right="20" bottom="16" left="20"/></padding>
-                        <Label text="Yolda" styleClass="stat-baslik"/>
-                        <Label fx:id="lblYoldaki" text="0" styleClass="stat-deger" style="-fx-text-fill: #8b5cf6;"/>
+                    <VBox alignment="CENTER_LEFT" prefWidth="180" spacing="6" style="-fx-border-color: #8b5cf6; -fx-border-width: 0 0 0 4;" styleClass="stat-kart">
+                        <padding><Insets bottom="16" left="20" right="20" top="16" /></padding>
+                        <Label styleClass="stat-baslik" text="Yolda" />
+                        <Label fx:id="lblYoldaki" style="-fx-text-fill: #8b5cf6;" styleClass="stat-deger" text="0" />
                     </VBox>
-                    <VBox styleClass="stat-kart" prefWidth="180" alignment="CENTER_LEFT" spacing="6" style="-fx-border-color: #10b981; -fx-border-width: 0 0 0 4;">
-                        <padding><Insets top="16" right="20" bottom="16" left="20"/></padding>
-                        <Label text="Teslim Edildi" styleClass="stat-baslik"/>
-                        <Label fx:id="lblTeslim" text="0" styleClass="stat-deger" style="-fx-text-fill: #10b981;"/>
+                    <VBox alignment="CENTER_LEFT" prefWidth="180" spacing="6" style="-fx-border-color: #10b981; -fx-border-width: 0 0 0 4;" styleClass="stat-kart">
+                        <padding><Insets bottom="16" left="20" right="20" top="16" /></padding>
+                        <Label styleClass="stat-baslik" text="Teslim Edildi" />
+                        <Label fx:id="lblTeslim" style="-fx-text-fill: #10b981;" styleClass="stat-deger" text="0" />
                     </VBox>
-                    <VBox styleClass="stat-kart" prefWidth="180" alignment="CENTER_LEFT" spacing="6" style="-fx-border-color: #ef4444; -fx-border-width: 0 0 0 4;">
-                        <padding><Insets top="16" right="20" bottom="16" left="20"/></padding>
-                        <Label text="Kuyrukta" styleClass="stat-baslik"/>
-                        <Label fx:id="lblBekleyen" text="0" styleClass="stat-deger" style="-fx-text-fill: #ef4444;"/>
+                    <VBox alignment="CENTER_LEFT" prefWidth="180" spacing="6" style="-fx-border-color: #ef4444; -fx-border-width: 0 0 0 4;" styleClass="stat-kart">
+                        <padding><Insets bottom="16" left="20" right="20" top="16" /></padding>
+                        <Label styleClass="stat-baslik" text="Kuyrukta" />
+                        <Label fx:id="lblBekleyen" style="-fx-text-fill: #ef4444;" styleClass="stat-deger" text="0" />
                     </VBox>
                 </HBox>
-                <Label text="Son Kargolar" styleClass="section-baslik"/>
-                <HBox styleClass="col-header" spacing="12" alignment="CENTER_LEFT">
-                    <padding><Insets top="8" right="16" bottom="8" left="16"/></padding>
-                    <Label text="ID" styleClass="col-baslik" prefWidth="95"/>
-                    <Label text="Tip" styleClass="col-baslik" prefWidth="90"/>
-                    <Label text="Gonderen - Alici" styleClass="col-baslik" HBox.hgrow="ALWAYS"/>
-                    <Label text="Adres" styleClass="col-baslik" prefWidth="200"/>
-                    <Label text="Agirlik" styleClass="col-baslik" prefWidth="70"/>
-                    <Label text="Durum" styleClass="col-baslik" prefWidth="110"/>
+                <Label styleClass="section-baslik" text="Son Kargolar" />
+                <HBox alignment="CENTER_LEFT" spacing="12" styleClass="col-header">
+                    <padding><Insets bottom="8" left="16" right="16" top="8" /></padding>
+                    <Label prefWidth="95" styleClass="col-baslik" text="ID" />
+                    <Label prefWidth="90" styleClass="col-baslik" text="Tip" />
+                    <Label styleClass="col-baslik" text="Gonderen - Alici" HBox.hgrow="ALWAYS" />
+                    <Label prefWidth="200" styleClass="col-baslik" text="Adres" />
+                    <Label prefWidth="70" styleClass="col-baslik" text="Agirlik" />
+                    <Label prefWidth="110" styleClass="col-baslik" text="Durum" />
                 </HBox>
                 <ScrollPane fx:id="kargoScrollPane" fitToWidth="true" prefHeight="400" styleClass="scroll-panel" VBox.vgrow="ALWAYS">
                     <VBox fx:id="kargoListBox" spacing="8">
-                        <padding><Insets top="4" right="4" bottom="4" left="4"/></padding>
+                        <padding><Insets bottom="4" left="4" right="4" top="4" /></padding>
                     </VBox>
                 </ScrollPane>
             </VBox>
 
-            <VBox fx:id="kargoGirisPanel" visible="false" styleClass="panel" spacing="20">
-                <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
-                <Label text="Yeni Kargo Kaydi" styleClass="panel-baslik"/>
-                <Label styleClass="info-text" wrapText="true" text="Kargo tipi NORMAL secilirse standart Queue'ya, digerleri (VIP/HIZLI/BOZULABILIR) Priority Queue'ya eklenir."/>
-                <GridPane styleClass="form-grid" hgap="16" vgap="14" maxWidth="700">
-                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
-                    <Label text="Gonderici:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                    <TextField fx:id="gonderenField" promptText="Ahmet Yilmaz" styleClass="form-field" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                    <Label text="Alici:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                    <TextField fx:id="aliciField" promptText="Mehmet Demir" styleClass="form-field" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                    <Label text="Adres:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                    <TextField fx:id="adresField" promptText="Kadikoy, Istanbul" styleClass="form-field" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                    <Label text="Agirlik (kg):" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                    <TextField fx:id="agirlikField" text="5.0" styleClass="form-field" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                    <Label text="Hacim (m3):" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                    <TextField fx:id="hacimField" text="0.3" styleClass="form-field" prefWidth="320" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                    <Label text="Tip:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-                    <ComboBox fx:id="tipCombo" prefWidth="200" styleClass="form-combo" onAction="#onTipDegisti" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
-                    <Label text="" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
-                    <Label fx:id="tipAcikLabel" styleClass="tip-acik" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+            <VBox fx:id="kargoGirisPanel" spacing="20" styleClass="panel" visible="false">
+                <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+                <Label styleClass="panel-baslik" text="Yeni Kargo Kaydi" />
+                <Label styleClass="info-text" text="Kargo tipi NORMAL secilirse standart Queue'ya, digerleri (VIP/HIZLI/BOZULABILIR) Priority Queue'ya eklenir." wrapText="true" />
+                <GridPane hgap="16" maxWidth="700" styleClass="form-grid" vgap="14">
+                    <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+                    <Label styleClass="form-label" text="Gonderici:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <TextField fx:id="gonderenField" prefWidth="320" promptText="Ahmet Yilmaz" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label styleClass="form-label" text="Alici:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <TextField fx:id="aliciField" prefWidth="320" promptText="Mehmet Demir" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label styleClass="form-label" text="Adres:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <TextField fx:id="adresField" prefWidth="320" promptText="Kadikoy, Istanbul" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label styleClass="form-label" text="Agirlik (kg):" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <TextField fx:id="agirlikField" prefWidth="320" styleClass="form-field" text="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Label styleClass="form-label" text="Hacim (m3):" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                    <TextField fx:id="hacimField" prefWidth="320" styleClass="form-field" text="0.3" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    <Label styleClass="form-label" text="Tip:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                    <ComboBox fx:id="tipCombo" onAction="#onTipDegisti" prefWidth="200" styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    <Label text="" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                    <Label fx:id="tipAcikLabel" styleClass="tip-acik" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+               <columnConstraints>
+                  <ColumnConstraints />
+                  <ColumnConstraints />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
                 </GridPane>
-                <HBox spacing="12" alignment="CENTER_LEFT">
-                    <Button text="Kargoyu Kaydet" styleClass="btn-primary" onAction="#onKaydet"/>
-                    <Button text="Temizle" styleClass="btn-secondary" onAction="#onTemizle"/>
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Button onAction="#onKaydet" styleClass="btn-primary" text="Kargoyu Kaydet" />
+                    <Button onAction="#onTemizle" styleClass="btn-secondary" text="Temizle" />
                 </HBox>
-                <Label fx:id="kargoGirisSonucLabel" styleClass="sonuc-label" wrapText="true" text=""/>
+                <Label fx:id="kargoGirisSonucLabel" styleClass="sonuc-label" text="" wrapText="true" />
             </VBox>
 
-            <VBox fx:id="kamyonPanel" visible="false" styleClass="panel" spacing="20">
-                <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
-                <Label text="Kamyon ve Stack Yonetimi" styleClass="panel-baslik"/>
-                <Label styleClass="info-text" wrapText="true" text="Kargolar LIFO (Last In First Out) mantigiyla yuklenir. Rotada en son teslim edilecek kargo en alta yuklenir. Teslim islemi Stack'ten pop() ile yapilir."/>
-                <Label fx:id="kamyonInfoLabel" styleClass="sonuc-label" wrapText="true" text=""/>
+            <VBox fx:id="kamyonPanel" spacing="20" styleClass="panel" visible="false">
+                <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+                <Label styleClass="panel-baslik" text="Kamyon ve Stack Yonetimi" />
+                <Label styleClass="info-text" text="Kargolar LIFO (Last In First Out) mantigiyla yuklenir. Rotada en son teslim edilecek kargo en alta yuklenir. Teslim islemi Stack'ten pop() ile yapilir." wrapText="true" />
+                <Label fx:id="kamyonInfoLabel" styleClass="sonuc-label" text="" wrapText="true" />
                 <ScrollPane fx:id="kamyonScrollPane" fitToWidth="true" prefHeight="580" styleClass="scroll-panel" VBox.vgrow="ALWAYS">
                     <VBox fx:id="kamyonListBox" spacing="16">
-                        <padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+                        <padding><Insets bottom="8" left="8" right="8" top="8" /></padding>
                     </VBox>
                 </ScrollPane>
             </VBox>
 
-            <VBox fx:id="sorgulamaPanel" visible="false" styleClass="panel" spacing="20">
-                <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
-                <Label text="Kargo Sorgulama - HashMap O(1)" styleClass="panel-baslik"/>
-                <Label styleClass="info-text" wrapText="true" text="Kargo ID girildiginde Hash Table uzerinden O(1) karmasikliginda anlik sonuc doner. Tum kargolari aramak yerine dogrudan hash degeriyle erisilir."/>
-                <HBox spacing="12" alignment="CENTER_LEFT">
-                    <TextField fx:id="aramaField" promptText="Kargo ID girin (ornek: KRG1001)" styleClass="form-field" prefWidth="300" onAction="#onAra"/>
-                    <Button text="Ara" styleClass="btn-primary" onAction="#onAra"/>
-                    <Button text="Tum IDleri Goster" styleClass="btn-secondary" onAction="#onTumIdler"/>
+            <VBox fx:id="sorgulamaPanel" spacing="20" styleClass="panel" visible="false">
+                <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+                <Label styleClass="panel-baslik" text="Kargo Sorgulama - HashMap O(1)" />
+                <Label styleClass="info-text" text="Kargo ID girildiginde Hash Table uzerinden O(1) karmasikliginda anlik sonuc doner. Tum kargolari aramak yerine dogrudan hash degeriyle erisilir." wrapText="true" />
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <TextField fx:id="aramaField" onAction="#onAra" prefWidth="300" promptText="Kargo ID girin (ornek: KRG1001)" styleClass="form-field" />
+                    <Button onAction="#onAra" styleClass="btn-primary" text="Ara" />
+                    <Button onAction="#onTumIdler" styleClass="btn-secondary" text="Tum IDleri Goster" />
                 </HBox>
                 <ScrollPane fx:id="sorgulamaScrollPane" fitToWidth="true" prefHeight="500" styleClass="scroll-panel" VBox.vgrow="ALWAYS">
                     <VBox fx:id="sorgulamaSonucBox" spacing="10">
-                        <padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+                        <padding><Insets bottom="8" left="8" right="8" top="8" /></padding>
                     </VBox>
                 </ScrollPane>
             </VBox>
 
-            <VBox fx:id="rotaPanel" visible="false" styleClass="panel" spacing="20">
-                <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
-                <Label text="Teslimat Rotasi - Dijkstra Algoritmasi" styleClass="panel-baslik"/>
-                <Label styleClass="info-text" wrapText="true" text="Graf uzerindeki ilceler dugum (node), yollar ayrit (edge). Dijkstra algoritmasi ile baslangic ve hedef arasindaki en kisa yol hesaplanir."/>
-                <HBox spacing="12" alignment="CENTER_LEFT">
-                    <Label text="Baslangic:" styleClass="form-label"/>
-                    <ComboBox fx:id="baslangicCombo" styleClass="form-combo" prefWidth="160"/>
-                    <Label text="Hedef:" styleClass="form-label"/>
-                    <ComboBox fx:id="hedefCombo" styleClass="form-combo" prefWidth="160"/>
-                    <Button text="Rotayi Hesapla (Dijkstra)" styleClass="btn-primary" onAction="#onHesapla"/>
+            <VBox fx:id="rotaPanel" spacing="20" styleClass="panel" visible="false">
+                <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+                <Label styleClass="panel-baslik" text="Teslimat Rotasi - Dijkstra Algoritmasi" />
+                <Label styleClass="info-text" text="Graf uzerindeki ilceler dugum (node), yollar ayrit (edge). Dijkstra algoritmasi ile baslangic ve hedef arasindaki en kisa yol hesaplanir." wrapText="true" />
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label styleClass="form-label" text="Baslangic:" />
+                    <ComboBox fx:id="baslangicCombo" prefWidth="160" styleClass="form-combo" />
+                    <Label styleClass="form-label" text="Hedef:" />
+                    <ComboBox fx:id="hedefCombo" prefWidth="160" styleClass="form-combo" />
+                    <Button onAction="#onHesapla" styleClass="btn-primary" text="Rotayi Hesapla (Dijkstra)" />
                 </HBox>
-                <Label fx:id="rotaSonucLabel" styleClass="sonuc-label" wrapText="true" text=""/>
+                <Label fx:id="rotaSonucLabel" styleClass="sonuc-label" text="" wrapText="true" />
                 <StackPane styleClass="graf-canvas" VBox.vgrow="ALWAYS">
-                    <Canvas fx:id="grafCanvas" width="750" height="430"/>
+                    <Canvas fx:id="grafCanvas" height="430" width="750" />
                 </StackPane>
             </VBox>
 
-            <VBox fx:id="bstPanel" visible="false" styleClass="panel" spacing="20">
-                <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
-                <Label text="Sirali Kargo Listesi - AVL BST (In-Order Traversal)" styleClass="panel-baslik"/>
-                <Label styleClass="info-text" wrapText="true" text="Kargolar AVL Agaci (dengeli BST) yapisinda tutulur. In-order traversal (sol, kok, sag) ile alici adina gore alfabetik sirali liste elde edilir. Her ekleme O(log n) karmasikliginda yapilir."/>
-                <Button text="Listeyi Yenile" styleClass="btn-secondary" onAction="#onYenile"/>
-                <HBox styleClass="col-header" spacing="12" alignment="CENTER_LEFT">
-                    <padding><Insets top="8" right="16" bottom="8" left="16"/></padding>
-                    <Label text="#" styleClass="col-baslik" prefWidth="50"/>
-                    <Label text="ID" styleClass="col-baslik" prefWidth="95"/>
-                    <Label text="Alici" styleClass="col-baslik" prefWidth="170"/>
-                    <Label text="Gonderici" styleClass="col-baslik" prefWidth="160"/>
-                    <Label text="Tip" styleClass="col-baslik" prefWidth="90"/>
-                    <Label text="Adres" styleClass="col-baslik" prefWidth="200"/>
-                    <Label text="Agirlik" styleClass="col-baslik" prefWidth="75"/>
-                    <Label text="Durum" styleClass="col-baslik" prefWidth="110"/>
+            <VBox fx:id="bstPanel" spacing="20" styleClass="panel" visible="false">
+                <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+                <Label styleClass="panel-baslik" text="Sirali Kargo Listesi - AVL BST (In-Order Traversal)" />
+                <Label styleClass="info-text" text="Kargolar AVL Agaci (dengeli BST) yapisinda tutulur. In-order traversal (sol, kok, sag) ile alici adina gore alfabetik sirali liste elde edilir. Her ekleme O(log n) karmasikliginda yapilir." wrapText="true" />
+                <Button onAction="#onYenile" styleClass="btn-secondary" text="Listeyi Yenile" />
+                <HBox alignment="CENTER_LEFT" spacing="12" styleClass="col-header">
+                    <padding><Insets bottom="8" left="16" right="16" top="8" /></padding>
+                    <Label prefWidth="50" styleClass="col-baslik" text="#" />
+                    <Label prefWidth="95" styleClass="col-baslik" text="ID" />
+                    <Label prefWidth="170" styleClass="col-baslik" text="Alici" />
+                    <Label prefWidth="160" styleClass="col-baslik" text="Gonderici" />
+                    <Label prefWidth="90" styleClass="col-baslik" text="Tip" />
+                    <Label prefWidth="200" styleClass="col-baslik" text="Adres" />
+                    <Label prefWidth="75" styleClass="col-baslik" text="Agirlik" />
+                    <Label prefWidth="110" styleClass="col-baslik" text="Durum" />
                 </HBox>
                 <ScrollPane fx:id="bstScrollPane" fitToWidth="true" prefHeight="540" styleClass="scroll-panel" VBox.vgrow="ALWAYS">
                     <VBox fx:id="bstListeBox" spacing="4">
-                        <padding><Insets top="4" right="4" bottom="4" left="4"/></padding>
+                        <padding><Insets bottom="4" left="4" right="4" top="4" /></padding>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Raporlar Paneli -->
+            <VBox fx:id="raporlarPanel" spacing="20" styleClass="panel" visible="false">
+                <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+                <Label styleClass="panel-baslik" text="Kargo Raporları ve İstatistikler" />
+                <TabPane fx:id="raporTabPane" VBox.vgrow="ALWAYS" />
+            </VBox>
+
+            <!-- Müşteriler Paneli -->
+            <VBox fx:id="musterilerPanel" spacing="20" styleClass="panel" visible="false">
+                <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+                <Label styleClass="panel-baslik" text="Müşteri Yönetimi" />
+                <Button fx:id="musteriYenileBtn" styleClass="btn-secondary" text="Yenile" />
+                <ScrollPane fitToWidth="true" styleClass="scroll-panel" VBox.vgrow="ALWAYS">
+                    <VBox fx:id="musteriListBox" spacing="6">
+                        <padding><Insets bottom="4" left="4" right="4" top="4" /></padding>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Bakım Paneli -->
+            <VBox fx:id="bakimPanel" spacing="20" styleClass="panel" visible="false">
+                <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+                <Label styleClass="panel-baslik" text="Kamyon Bakım Kayıtları" />
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <ComboBox fx:id="bakimKamyonCombo" prefWidth="200" promptText="Kamyon seçin" styleClass="form-combo" />
+                    <Button fx:id="bakimYenileBtn" onAction="#onBakimYenile" styleClass="btn-secondary" text="Yenile" />
+                </HBox>
+                <ScrollPane fitToWidth="true" styleClass="scroll-panel" VBox.vgrow="ALWAYS">
+                    <VBox fx:id="bakimListBox" spacing="6">
+                        <padding><Insets bottom="4" left="4" right="4" top="4" /></padding>
+                  <children>
+                     <ListView fx:id="bakimListView" prefHeight="200.0" prefWidth="200.0" />
+                  </children>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Faturalar Paneli -->
+            <VBox fx:id="faturalarPanel" spacing="20" styleClass="panel" visible="false">
+                <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
+                <Label styleClass="panel-baslik" text="Fatura Yönetimi" />
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <TextField fx:id="faturaKargoIdField" prefWidth="280" promptText="Kargo ID girin" styleClass="form-field" />
+                    <Button fx:id="faturaSorgulaBtn" styleClass="btn-primary" text="Sorgula" />
+                </HBox>
+                <Label fx:id="faturaSonucLabel" styleClass="sonuc-label" text="" wrapText="true" />
+                <ScrollPane fitToWidth="true" styleClass="scroll-panel" VBox.vgrow="ALWAYS">
+                    <VBox fx:id="faturaListBox" spacing="6">
+                        <padding><Insets bottom="4" left="4" right="4" top="4" /></padding>
                     </VBox>
                 </ScrollPane>
             </VBox>
