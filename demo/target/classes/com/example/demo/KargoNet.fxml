@@ -251,7 +251,7 @@
                 <Label styleClass="panel-baslik" text="Fatura Yönetimi" />
                 <HBox alignment="CENTER_LEFT" spacing="12">
                     <TextField fx:id="faturaKargoIdField" prefWidth="280" promptText="Kargo ID girin" styleClass="form-field" />
-                    <Button fx:id="faturaSorgulaBtn" styleClass="btn-primary" text="Sorgula" />
+                    <Button fx:id="faturaSorgulaBtn" onAction="#sorgulaFatura" styleClass="btn-primary" text="Sorgula" />
                 </HBox>
                 <Label fx:id="faturaSonucLabel" styleClass="sonuc-label" text="" wrapText="true" />
                 <ScrollPane fitToWidth="true" styleClass="scroll-panel" VBox.vgrow="ALWAYS">

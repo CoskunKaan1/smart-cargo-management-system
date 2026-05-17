@@ -768,7 +768,7 @@ public class MainController implements Initializable {
         gosterAnimasyonlu(faturalarPanel);
     }
 
-    private void sorgulaPatura() {
+    @FXML private void sorgulaFatura() {
         String kid = faturaKargoIdField.getText();
         faturaSonucLabel.setText("Fatura detayları için özel bir sorgu eklenebilir. (Demo) - Kargo ID: " + kid);
     }
