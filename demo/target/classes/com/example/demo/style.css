@@ -1,0 +1,405 @@
+/* ============================================
+   KargoNet — Modern Dark Theme
+   ============================================ */
+
+* {
+    /* Daha modern, okunaklı bir genel font */
+    -fx-font-family: "Segoe UI", "Roboto", Helvetica, Arial, sans-serif;
+}
+
+.ana-ekran {
+    -fx-background-color: #0b1120; /* Daha derin bir arka plan */
+}
+
+/* ===== HEADER ===== */
+.header {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+}
+
+.header-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #ffffff;
+    -fx-letter-spacing: 1px;
+}
+
+.header-sub {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+}
+
+.header-version {
+    -fx-font-size: 11px;
+    -fx-text-fill: #475569;
+    -fx-font-family: "Consolas", monospace; /* Versiyon numarası teknik kalsın */
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    -fx-background-color: #0f172a;
+    -fx-border-color: #1e3a5f;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8 20 0 20;
+    -fx-spacing: 8;
+}
+
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-border-radius: 8 8 0 0;
+    -fx-background-radius: 8 8 0 0;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+}
+
+.nav-btn:hover {
+    -fx-background-color: #1e293b;
+    -fx-text-fill: #cbd5e1;
+}
+
+.nav-btn:selected {
+    -fx-background-color: #1e293b;
+    -fx-text-fill: #3b82f6;
+    /* Aktif butonda altta daha kalın ve parlak bir çizgi */
+    -fx-border-color: transparent transparent #3b82f6 transparent;
+    -fx-border-width: 0 0 3 0;
+}
+
+/* ===== PANEL ===== */
+.panel {
+    -fx-background-color: #0f172a;
+}
+
+.panel-baslik {
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #f8fafc;
+    -fx-padding: 0 0 12 0;
+    -fx-border-color: #1e3a5f;
+    -fx-border-width: 0 0 1 0;
+}
+
+.section-baslik {
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #cbd5e1;
+    -fx-padding: 10 0 6 0;
+}
+
+.info-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+    -fx-font-style: italic;
+}
+
+/* ===== STAT CARDS ===== */
+.stat-kart {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 15, 0, 0, 4);
+}
+
+.stat-baslik {
+    -fx-font-size: 13px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-weight: 600;
+}
+
+.stat-deger {
+    -fx-font-size: 36px;
+    -fx-font-weight: 800;
+    -fx-font-family: "Consolas", monospace;
+}
+
+/* ===== KARGO SATIRLARI (HOVER EFEKTİ) ===== */
+.kargo-satir {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+}
+
+.kargo-satir:hover {
+    -fx-background-color: #253352;
+    -fx-border-color: #3b82f6;
+    -fx-cursor: hand;
+}
+
+.kargo-satir-alt {
+    -fx-background-color: #172035;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+}
+
+.kargo-satir-alt:hover {
+    -fx-background-color: #253352;
+    -fx-border-color: #3b82f6;
+    -fx-cursor: hand;
+}
+
+.kargo-id {
+    -fx-text-fill: #60a5fa;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-font-family: "Consolas", monospace;
+}
+
+.kargo-isim {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+}
+
+.kargo-adres {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 13px;
+}
+
+/* ===== BADGE ===== */
+.badge {
+    -fx-padding: 4 10;
+    -fx-background-radius: 12; /* Tam yuvarlak hap görünümü */
+    -fx-font-size: 11.5px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 0.5px;
+}
+
+/* ===== FORM ===== */
+.form-grid {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 2);
+}
+
+.form-field {
+    -fx-background-color: #0b1120;
+    -fx-text-fill: #f8fafc;
+    -fx-border-color: #334155;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #475569;
+}
+
+.form-field:focused {
+    -fx-border-color: #3b82f6;
+    -fx-background-color: #0f172a;
+}
+
+.form-label {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.form-combo {
+    -fx-background-color: #0b1120;
+    -fx-text-fill: #f8fafc;
+    -fx-border-color: #334155;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-font-size: 14px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom right, #2563eb, #1d4ed8);
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-font-size: 13.5px;
+    -fx-padding: 10 22;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.4), 8, 0, 0, 2);
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom right, #3b82f6, #2563eb);
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.6), 12, 0, 0, 3);
+}
+
+.btn-secondary {
+    -fx-background-color: #1e293b;
+    -fx-text-fill: #cbd5e1;
+    -fx-font-weight: 600;
+    -fx-font-size: 13.5px;
+    -fx-padding: 10 22;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #475569;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #334155;
+    -fx-text-fill: #f8fafc;
+}
+
+/* ===== SONUÇ LABEL ===== */
+.sonuc-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 12 16;
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+}
+
+/* ===== MODERN SCROLLBAR ===== */
+.scroll-panel {
+    -fx-background: #0f172a;
+    -fx-background-color: #0f172a;
+    -fx-border-color: transparent;
+}
+
+.scroll-panel > .viewport {
+    -fx-background-color: #0f172a;
+}
+
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-width: 10;
+    -fx-pref-height: 10;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #475569;
+    -fx-background-radius: 10;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #64748b;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Buton oklarını gizleyerek daha şık bir görünüm elde edelim */
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-padding: 0;
+}
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
+    -fx-padding: 0;
+}
+
+/* ===== TABLO ===== */
+.col-header {
+    -fx-background-color: #1e293b;
+    -fx-border-color: transparent transparent #334155 transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 8 16;
+}
+
+.col-baslik {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #94a3b8;
+    -fx-text-transform: uppercase;
+}
+
+/* ===== KAMYON & DETAY KARTLARI ===== */
+.kamyon-kart, .detay-kart {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 12, 0, 0, 3);
+}
+
+.progress-bar-custom {
+    -fx-accent: #3b82f6;
+    -fx-background-color: #0f172a;
+    -fx-background-radius: 6;
+    -fx-pref-height: 12;
+}
+
+.progress-bar-custom > .bar {
+    -fx-background-color: linear-gradient(to right, #2563eb, #60a5fa);
+    -fx-background-radius: 6;
+}
+
+.progress-bar-custom > .track {
+    -fx-background-color: #0b1120;
+    -fx-background-radius: 6;
+    -fx-border-color: transparent;
+}
+.stat-alt {
+    -fx-font-size: 11px;
+    -fx-text-fill: #475569;
+    -fx-font-style: italic;
+}
+
+.stat-progress {
+    -fx-background-color: #0b1120;
+    -fx-background-radius: 4;
+}
+
+.stat-progress > .bar {
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+}
+
+.stat-progress > .track {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+}
+
+.kamyon-plaka {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #f1f5f9;
+}
+
+.stack-satir {
+    -fx-background-color: #0f172a;
+    -fx-background-radius: 6;
+}
+
+.stack-top {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #3b82f6;
+}
+
+.detay-baslik {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #60a5fa;
+}
+
+.detay-val {
+    -fx-font-size: 14px;
+    -fx-text-fill: #f1f5f9;
+}
+
+.tip-acik {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-font-style: italic;
+}
