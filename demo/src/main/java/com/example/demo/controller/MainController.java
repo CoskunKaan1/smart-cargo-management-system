@@ -35,8 +35,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-
+import java.util.stream.Collectors;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 
 public class MainController implements Initializable {
 
@@ -46,8 +48,10 @@ public class MainController implements Initializable {
     @FXML private HBox navBar;
 
     // Navigasyon
-    @FXML private ToggleButton btnDashboard, btnGiris, btnKamyon, btnSorgulama, btnRota, btnBst, btnRaporlar, btnMusteriler, btnBakim, btnFaturalar;
+    @FXML private ToggleButton btnDashboard, btnGiris, btnKamyon, btnSorgulama, btnRota, btnBst;
+    @FXML private ToggleButton btnRaporlar, btnMusteriler, btnBakim, btnFaturalar;
     @FXML private VBox dashboardPanel, kargoGirisPanel, kamyonPanel, sorgulamaPanel, rotaPanel, bstPanel;
+    @FXML private VBox raporlarPanel, musterilerPanel, bakimPanel, faturalarPanel;
     private ToggleGroup toggleGroup;
 
     // Dashboard
@@ -75,29 +79,6 @@ public class MainController implements Initializable {
     // BST Liste
     @FXML private VBox bstListeBox;
 
-    // Raporlar Paneli
-    @FXML private VBox raporlarPanel;
-    @FXML private TabPane raporTabPane;
-
-    // Müşteriler Paneli
-    @FXML private VBox musterilerPanel;
-    @FXML private VBox musteriListBox;
-    @FXML private Button musteriYenileBtn;
-
-    // Bakım Paneli
-    @FXML private VBox bakimPanel;
-    @FXML private ComboBox<String> bakimKamyonCombo;
-    @FXML private VBox bakimListBox;
-    @FXML private ListView<String> bakimListView;
-    @FXML private Button bakimYenileBtn;
-
-    // Faturalar Paneli
-    @FXML private VBox faturalarPanel;
-    @FXML private TextField faturaKargoIdField;
-    @FXML private Label faturaSonucLabel;
-    @FXML private VBox faturaListBox;
-    @FXML private Button faturaSorgulaBtn;
-
     // Rota için trafik kontrolü (dinamik rota)
     private DatePicker tarihPicker;
     private ComboBox<Integer> saatCombo;
@@ -106,6 +87,24 @@ public class MainController implements Initializable {
     private Button btnSimBaslat, btnSimDurdur;
     private Label lblYakitMaliyet;
     private Timeline maliyetTimeline;
+
+    // Raporlar paneli kontrolleri
+    @FXML private ComboBox<String> raporPeriyotCombo;
+    @FXML private javafx.scene.chart.BarChart<String, Number> raporBarChart;
+    @FXML private javafx.scene.chart.PieChart raporPieChart;
+    @FXML private javafx.scene.chart.BarChart<String, Number> raporBolgeChart;
+
+    // Müşteriler paneli
+    @FXML private VBox musteriListBox;
+
+    // Bakım paneli
+    @FXML private ComboBox<String> bakimKamyonCombo;
+    @FXML private VBox bakimListBox;
+
+    // Faturalar paneli
+    @FXML private TextField faturaKargoIdField;
+    @FXML private Label faturaLabel;
+    @FXML private VBox faturaDetayBox;
 
     // Harita koordinatları (çizim için)
     private static final Map<String, double[]> POZISYONLAR = new LinkedHashMap<>();
@@ -140,13 +139,22 @@ public class MainController implements Initializable {
         btnSorgulama.setToggleGroup(toggleGroup);
         btnRota.setToggleGroup(toggleGroup);
         btnBst.setToggleGroup(toggleGroup);
-        btnRaporlar.setToggleGroup(toggleGroup);
-        btnBakim.setToggleGroup(toggleGroup);
-        btnMusteriler.setToggleGroup(toggleGroup);
-        btnFaturalar.setToggleGroup(toggleGroup);
         toggleGroup.selectedToggleProperty().addListener((obs, o, n) -> {
             if (n == null) o.setSelected(true);
         });
+
+        // Yeni paneller için toggle group'a ekle
+        btnRaporlar.setToggleGroup(toggleGroup);
+        btnMusteriler.setToggleGroup(toggleGroup);
+        btnBakim.setToggleGroup(toggleGroup);
+        btnFaturalar.setToggleGroup(toggleGroup);
+
+        // Raporlar periyot combo'sunu doldur
+        raporPeriyotCombo.getItems().addAll("Günlük (30 gün)", "Haftalık (12 hafta)", "Aylık (12 ay)");
+        raporPeriyotCombo.setValue("Günlük (30 gün)");
+
+        // Bakım kamyon combo'sunu doldur
+        for (Kamyon k : servis.getKamyonlar()) bakimKamyonCombo.getItems().add(k.getId());
 
         // Kargo giriş
         tipCombo.getItems().addAll("NORMAL", "VIP", "HIZLI", "BOZULABILIR");
@@ -189,9 +197,6 @@ public class MainController implements Initializable {
         simBox.setPadding(new Insets(10));
         simBox.setStyle("-fx-background-color: #1e293b; -fx-background-radius: 8;");
         kamyonPanel.getChildren().add(0, simBox);
-
-        // Raporlar tablarını oluştur
-        raporTablariOlustur();
 
         // Başlangıç ekranı
         onDashboard();
@@ -332,6 +337,13 @@ public class MainController implements Initializable {
             teslimBtn.setOnAction(e -> {
                 Kargo kargo = k.kargoTeslimEt();
                 if (kargo != null) {
+                    // Kargo ve kamyon durumunu veritabanına yansıt
+                    try {
+                        servis.getDb().kargoGuncelle(kargo);  // durum=TESLIM_EDILDI, teslim_tarihi set
+                        servis.getDb().kamyonGuncelle(k);      // mevcut_agirlik/mevcut_hacim=0'a güncelle
+                    } catch (java.sql.SQLException ex) {
+                        ex.printStackTrace();
+                    }
                     kamyonInfoLabel.setText("Teslim edildi: " + kargo.getId() + " -> " + kargo.getAlici() + " (" + kargo.getAdres() + ")");
                     kamyonInfoLabel.setStyle("-fx-text-fill: #10b981;");
                 } else {
@@ -549,105 +561,51 @@ public class MainController implements Initializable {
         }
     }
 
-    //raporlar düğmesine basınca
-    @FXML private void onRaporlar() {
+    // ==================== RAPORLAR (Inline Panel) ====================
+    @FXML public void onRaporlar() {
         gosterAnimasyonlu(raporlarPanel);
+        onRaporGuncelle();
     }
 
-    private void raporTablariOlustur() {
-        // Tab 1: Günlük/Haftalık/Aylık
-        Tab tabGiris = new Tab("Kargo Giriş Grafiği");
-        tabGiris.setClosable(false);
-        VBox girisBox = new VBox(10);
-        girisBox.setPadding(new Insets(10));
-        ComboBox<String> periyotCombo = new ComboBox<>();
-        periyotCombo.getItems().addAll("Günlük (30 gün)", "Haftalık (12 hafta)", "Aylık (12 ay)");
-        periyotCombo.setValue("Günlük (30 gün)");
-        javafx.scene.chart.BarChart<String, Number> barChart = new javafx.scene.chart.BarChart<>(new javafx.scene.chart.CategoryAxis(), new javafx.scene.chart.NumberAxis());
-        barChart.setTitle("Kargo Giriş Sayısı");
-        barChart.setAnimated(false);
-        Button yenileBtn = new Button("Yenile");
-        yenileBtn.setOnAction(e -> {
-            RaporServisi rs = new RaporServisi(servis.getTumKargolar());
-            javafx.scene.chart.XYChart.Series<String, Number> series = new javafx.scene.chart.XYChart.Series<>();
-            series.setName("Kargo Sayısı");
-            if (periyotCombo.getValue().equals("Günlük (30 gün)")) {
-                Map<LocalDate, Long> gunluk = rs.gunlukKargoSayisi(30);
-                for (Map.Entry<LocalDate, Long> entry : gunluk.entrySet()) {
-                    series.getData().add(new javafx.scene.chart.XYChart.Data<>(entry.getKey().toString(), entry.getValue()));
-                }
-            } else if (periyotCombo.getValue().equals("Haftalık (12 hafta)")) {
-                Map<Integer, Long> haftalik = rs.haftalikKargoSayisi(12);
-                for (Map.Entry<Integer, Long> entry : haftalik.entrySet()) {
-                    series.getData().add(new javafx.scene.chart.XYChart.Data<>("Hafta " + entry.getKey(), entry.getValue()));
-                }
-            } else {
-                Map<String, Long> aylik = rs.aylikKargoSayisi(12);
-                for (Map.Entry<String, Long> entry : aylik.entrySet()) {
-                    series.getData().add(new javafx.scene.chart.XYChart.Data<>(entry.getKey(), entry.getValue()));
-                }
-            }
-            barChart.getData().clear();
-            barChart.getData().add(series);
-        });
-        yenileBtn.fire();
-        girisBox.getChildren().addAll(periyotCombo, yenileBtn, barChart);
-        tabGiris.setContent(girisBox);
+    @FXML public void onRaporGuncelle() {
+        RaporServisi rs = new RaporServisi(servis.getTumKargolar());
+        // Bar chart - kargo girişi
+        javafx.scene.chart.XYChart.Series<String, Number> series = new javafx.scene.chart.XYChart.Series<>();
+        series.setName("Kargo Sayısı");
+        String periyot = raporPeriyotCombo.getValue();
+        if (periyot == null || periyot.startsWith("Günlük")) {
+            Map<LocalDate, Long> gunluk = rs.gunlukKargoSayisi(30);
+            for (Map.Entry<LocalDate, Long> e : gunluk.entrySet())
+                series.getData().add(new javafx.scene.chart.XYChart.Data<>(e.getKey().toString(), e.getValue()));
+        } else if (periyot.startsWith("Haftalık")) {
+            Map<Integer, Long> haftalik = rs.haftalikKargoSayisi(12);
+            for (Map.Entry<Integer, Long> e : haftalik.entrySet())
+                series.getData().add(new javafx.scene.chart.XYChart.Data<>("Hafta " + e.getKey(), e.getValue()));
+        } else {
+            Map<String, Long> aylik = rs.aylikKargoSayisi(12);
+            for (Map.Entry<String, Long> e : aylik.entrySet())
+                series.getData().add(new javafx.scene.chart.XYChart.Data<>(e.getKey(), e.getValue()));
+        }
+        raporBarChart.getData().clear();
+        raporBarChart.getData().add(series);
 
-        // Tab 2: Ortalama Teslimat Süresi (PieChart)
-        Tab tabSure = new Tab("Teslimat Süreleri");
-        tabSure.setClosable(false);
-        VBox sureBox = new VBox(10);
-        sureBox.setPadding(new Insets(10));
-        javafx.scene.chart.PieChart pieChart = new javafx.scene.chart.PieChart();
-        Button sureYenile = new Button("Yenile");
-        sureYenile.setOnAction(e -> {
-            RaporServisi rs = new RaporServisi(servis.getTumKargolar());
-            Map<Kargo.Tip, Double> ort = rs.ortalamaTeslimatSuresi();
-            pieChart.getData().clear();
-            for (Map.Entry<Kargo.Tip, Double> entry : ort.entrySet()) {
-                pieChart.getData().add(new javafx.scene.chart.PieChart.Data(entry.getKey().name(), entry.getValue()));
-            }
-        });
-        sureYenile.fire();
-        sureBox.getChildren().addAll(sureYenile, pieChart);
-        tabSure.setContent(sureBox);
+        // Pie chart - teslimat süreleri
+        Map<Kargo.Tip, Double> ort = rs.ortalamaTeslimatSuresi();
+        raporPieChart.getData().clear();
+        for (Map.Entry<Kargo.Tip, Double> e : ort.entrySet())
+            raporPieChart.getData().add(new javafx.scene.chart.PieChart.Data(e.getKey().name(), e.getValue()));
 
-        // Tab 3: Yoğun Bölgeler
-        Tab tabBolge = new Tab("Yoğun Bölgeler");
-        tabBolge.setClosable(false);
-        VBox bolgeBox = new VBox(10);
-        bolgeBox.setPadding(new Insets(10));
-        javafx.scene.chart.BarChart<String, Number> bolgeChart = new javafx.scene.chart.BarChart<>(new javafx.scene.chart.CategoryAxis(), new javafx.scene.chart.NumberAxis());
-        bolgeChart.setTitle("En Yoğun 5 İlçe");
-        Button bolgeYenile = new Button("Yenile");
-        bolgeYenile.setOnAction(e -> {
-            RaporServisi rs = new RaporServisi(servis.getTumKargolar());
-            Map<String, Long> yogun = rs.enYogunBolge(5);
-            javafx.scene.chart.XYChart.Series<String, Number> series = new javafx.scene.chart.XYChart.Series<>();
-            series.setName("Kargo Adedi");
-            for (Map.Entry<String, Long> entry : yogun.entrySet()) {
-                series.getData().add(new javafx.scene.chart.XYChart.Data<>(entry.getKey(), entry.getValue()));
-            }
-            bolgeChart.getData().clear();
-            bolgeChart.getData().add(series);
-        });
-        bolgeYenile.fire();
-        bolgeBox.getChildren().addAll(bolgeYenile, bolgeChart);
-        tabBolge.setContent(bolgeBox);
-
-        // Tab 4: Excel Çıktı
-        Tab tabExcel = new Tab("Excel Raporu");
-        tabExcel.setClosable(false);
-        VBox excelBox = new VBox(10);
-        excelBox.setPadding(new Insets(10));
-        Button excelBtn = new Button("Excel'e Aktar (Tüm Kargolar)");
-        excelBtn.setOnAction(e -> exportToExcel());
-        excelBox.getChildren().add(excelBtn);
-        tabExcel.setContent(excelBox);
-
-        raporTabPane.getTabs().addAll(tabGiris, tabSure, tabBolge, tabExcel);
+        // Bölge chart
+        Map<String, Long> yogun = rs.enYogunBolge(5);
+        javafx.scene.chart.XYChart.Series<String, Number> bolgeSeries = new javafx.scene.chart.XYChart.Series<>();
+        bolgeSeries.setName("Kargo Adedi");
+        for (Map.Entry<String, Long> e : yogun.entrySet())
+            bolgeSeries.getData().add(new javafx.scene.chart.XYChart.Data<>(e.getKey(), e.getValue()));
+        raporBolgeChart.getData().clear();
+        raporBolgeChart.getData().add(bolgeSeries);
     }
+
+    @FXML public void onExcelAktar() { exportToExcel(); }
 
     private void exportToExcel() {
         try {
@@ -685,7 +643,110 @@ public class MainController implements Initializable {
         }
     }
 
-    // ==================== SİMÜLASYON (4. Adım) ====================
+    // ==================== MÜŞTERİLER (Inline Panel) ====================
+    @FXML public void onMusteriler() {
+        gosterAnimasyonlu(musterilerPanel);
+        onMusterileriYenile();
+    }
+
+    @FXML public void onMusterileriYenile() {
+        musteriListBox.getChildren().clear();
+        try {
+            for (Map<String, Object> m : servis.getDb().musterileriListele()) {
+                HBox row = new HBox(12);
+                row.getStyleClass().add("kargo-satir");
+                row.setPadding(new Insets(10, 16, 10, 16));
+                row.setAlignment(Pos.CENTER_LEFT);
+                Label idLbl = new Label(String.valueOf(m.get("id"))); idLbl.getStyleClass().add("kargo-id"); idLbl.setPrefWidth(60);
+                Label adLbl = new Label(String.valueOf(m.get("ad_soyad"))); adLbl.getStyleClass().add("kargo-isim"); HBox.setHgrow(adLbl, Priority.ALWAYS);
+                Label telLbl = new Label(String.valueOf(m.get("telefon"))); telLbl.getStyleClass().add("kargo-adres"); telLbl.setPrefWidth(150);
+                row.getChildren().addAll(idLbl, adLbl, telLbl);
+                musteriListBox.getChildren().add(row);
+            }
+            if (musteriListBox.getChildren().isEmpty()) {
+                Label bos = new Label("  -- Kayitli musteri yok --"); bos.getStyleClass().add("info-text");
+                musteriListBox.getChildren().add(bos);
+            }
+        } catch (SQLException ex) {
+            Label hata = new Label("Veritabanı hatası: " + ex.getMessage()); hata.setStyle("-fx-text-fill: #ef4444;");
+            musteriListBox.getChildren().add(hata);
+        }
+    }
+
+    // ==================== BAKIM (Inline Panel) ====================
+    @FXML public void onKamyonBakim() {
+        gosterAnimasyonlu(bakimPanel);
+    }
+
+    @FXML public void onBakimGetir() {
+        String kid = bakimKamyonCombo.getValue();
+        if (kid == null) return;
+        bakimListBox.getChildren().clear();
+        try {
+            for (Map<String, Object> b : servis.getDb().kamyonBakimListele(kid)) {
+                HBox row = new HBox(12);
+                row.getStyleClass().add("kargo-satir");
+                row.setPadding(new Insets(10, 16, 10, 16));
+                row.setAlignment(Pos.CENTER_LEFT);
+                Label tarihLbl = new Label(String.valueOf(b.get("bakim_tarihi"))); tarihLbl.getStyleClass().add("kargo-id"); tarihLbl.setPrefWidth(120);
+                Label arizaLbl = new Label(String.valueOf(b.get("ariza"))); arizaLbl.getStyleClass().add("kargo-isim"); HBox.setHgrow(arizaLbl, Priority.ALWAYS);
+                Label ucretLbl = new Label(b.get("ucret") + " TL"); ucretLbl.getStyleClass().add("badge"); ucretLbl.setPrefWidth(100);
+                row.getChildren().addAll(tarihLbl, arizaLbl, ucretLbl);
+                bakimListBox.getChildren().add(row);
+            }
+            if (bakimListBox.getChildren().isEmpty()) {
+                Label bos = new Label("  -- Bu kamyon icin bakim kaydi yok --"); bos.getStyleClass().add("info-text");
+                bakimListBox.getChildren().add(bos);
+            }
+        } catch (SQLException ex) {
+            Label hata = new Label("Veritabanı hatası: " + ex.getMessage()); hata.setStyle("-fx-text-fill: #ef4444;");
+            bakimListBox.getChildren().add(hata);
+        }
+    }
+
+    // ==================== FATURALAR (Inline Panel) ====================
+    @FXML public void onFaturalar() {
+        gosterAnimasyonlu(faturalarPanel);
+    }
+
+    @FXML public void onFaturaSorgula() {
+        String kid = faturaKargoIdField.getText().trim().toUpperCase();
+        faturaDetayBox.getChildren().clear();
+        if (kid.isEmpty()) {
+            faturaLabel.setText("Lutfen bir Kargo ID girin.");
+            faturaLabel.setStyle("-fx-text-fill: #f59e0b;");
+            return;
+        }
+        Kargo k = servis.kargoAra(kid);
+        if (k == null) {
+            faturaLabel.setText("Kargo bulunamadi: " + kid);
+            faturaLabel.setStyle("-fx-text-fill: #ef4444;");
+            return;
+        }
+        faturaLabel.setText("Fatura bilgileri (Demo)");
+        faturaLabel.setStyle("-fx-text-fill: #10b981;");
+        VBox detay = new VBox(10);
+        detay.getStyleClass().add("detay-kart");
+        detay.setPadding(new Insets(20));
+        detay.setMaxWidth(500);
+        Label baslik = new Label("Fatura: " + k.getId()); baslik.getStyleClass().add("detay-baslik");
+        GridPane grid = new GridPane(); grid.setHgap(20); grid.setVgap(10);
+        double ucret = k.getAgirlik() * 5.0 + (k.getTip() == Kargo.Tip.VIP ? 50 : k.getTip() == Kargo.Tip.HIZLI ? 30 : k.getTip() == Kargo.Tip.BOZULABILIR ? 40 : 0);
+        String[][] rows2 = {
+                {"Kargo ID:", k.getId()}, {"Gonderen:", k.getGonderen()}, {"Alici:", k.getAlici()},
+                {"Adres:", k.getAdres()}, {"Tip:", k.getTip().name()},
+                {"Agirlik:", String.format("%.2f kg", k.getAgirlik())},
+                {"Fatura Tutari:", String.format("%.2f TL", ucret)}, {"Durum:", k.getDurum().name()}
+        };
+        for (int i = 0; i < rows2.length; i++) {
+            Label lbl = new Label(rows2[i][0]); lbl.getStyleClass().add("form-label");
+            Label val = new Label(rows2[i][1]); val.getStyleClass().add("detay-val");
+            grid.add(lbl, 0, i); grid.add(val, 1, i);
+        }
+        detay.getChildren().addAll(baslik, grid);
+        faturaDetayBox.getChildren().add(detay);
+    }
+    // ==================== SİMÜLASYON ====================
     private void baslatSimulasyon() {
         if (simulasyonServisi.isCalisiyor()) return;
         simulasyonServisi.baslat();
@@ -712,65 +773,6 @@ public class MainController implements Initializable {
         }));
         maliyetTimeline.setCycleCount(Timeline.INDEFINITE);
         maliyetTimeline.play();
-    }
-
-    //müşteriler bakım fatura düğmelerine basınca
-    @FXML private void onMusteriler() {
-        gosterAnimasyonlu(musterilerPanel);
-        yenileMusteriler();
-    }
-
-    private void yenileMusteriler() {
-        musteriListBox.getChildren().clear();
-        try {
-            for (Map<String, Object> m : servis.getDb().musterileriListele()) {
-                Label lbl = new Label(m.get("id") + " - " + m.get("ad_soyad") + " (" + m.get("telefon") + ")");
-                lbl.setPadding(new Insets(6, 12, 6, 12));
-                lbl.setMaxWidth(Double.MAX_VALUE);
-                lbl.getStyleClass().add("kargo-satir");
-                musteriListBox.getChildren().add(lbl);
-            }
-        } catch (SQLException ex) { ex.printStackTrace(); }
-    }
-
-    @FXML private void onBakim() {
-        gosterAnimasyonlu(bakimPanel);
-        for (Kamyon k : servis.getKamyonlar()) bakimKamyonCombo.getItems().add(k.getId());
-    }
-    @FXML private void onBakimYenile() {
-        String kid = bakimKamyonCombo.getValue();
-        if (kid == null) return;
-        try {
-            bakimListView.getItems().clear();
-            for (Map<String, Object> b : servis.getDb().kamyonBakimListele(kid)) {
-                bakimListView.getItems().add(b.get("bakim_tarihi") + " - " + b.get("ariza") + " (" + b.get("ucret") + " TL)");
-            }
-        } catch (SQLException ex) { ex.printStackTrace(); }
-    }
-
-
-    private void yenileBakim() {
-        String kid = bakimKamyonCombo.getValue();
-        if (kid == null) return;
-        bakimListBox.getChildren().clear();
-        try {
-            for (Map<String, Object> b : servis.getDb().kamyonBakimListele(kid)) {
-                Label lbl = new Label(b.get("bakim_tarihi") + " - " + b.get("ariza") + " (" + b.get("ucret") + " TL)");
-                lbl.setPadding(new Insets(6, 12, 6, 12));
-                lbl.setMaxWidth(Double.MAX_VALUE);
-                lbl.getStyleClass().add("kargo-satir");
-                bakimListBox.getChildren().add(lbl);
-            }
-        } catch (SQLException ex) { ex.printStackTrace(); }
-    }
-
-    @FXML private void onFaturalar() {
-        gosterAnimasyonlu(faturalarPanel);
-    }
-
-    @FXML private void sorgulaFatura() {
-        String kid = faturaKargoIdField.getText();
-        faturaSonucLabel.setText("Fatura detayları için özel bir sorgu eklenebilir. (Demo) - Kargo ID: " + kid);
     }
 
     // ==================== YARDIMCI METOTLAR ====================

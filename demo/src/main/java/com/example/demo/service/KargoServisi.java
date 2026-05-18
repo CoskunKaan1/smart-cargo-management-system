@@ -71,6 +71,22 @@ public class KargoServisi {
 
             // 4. Kamyonları veritabanından oku
             List<Kamyon> dbKamyonlar = db.tumKamyonlariGetir();
+            // Kamyon mevcut ağırlık/hacim değerlerini kargo_kamyon_log üzerinden
+            // yeniden hesapla. Böylece program yeniden başlatıldığında
+            // teslim edilmiş kargolar hâlâ yüklüymüş gibi görünmez.
+            // Her kamyon için: o kamyona YUKLENDI logu olan ama TESLIM_EDILDI
+            // durumuna geçmemiş kargolar = gerçek yük.
+            // Ancak kargo-kamyon eşleşmesi log tablosunda tutulduğundan burada
+            // en güvenli yol: YOLDA durumunda hiç kargo yoksa tüm kamyonları sıfırla.
+            boolean hicYoldaKargo = dbKargolar.stream()
+                    .noneMatch(k -> k.getDurum() == Durum.YOLDA);
+            for (Kamyon kamyon : dbKamyonlar) {
+                if (hicYoldaKargo) {
+                    kamyon.setMevcutAgirlik(0);
+                    kamyon.setMevcutHacim(0);
+                    try { db.kamyonGuncelle(kamyon); } catch (SQLException ignored) {}
+                }
+            }
             kamyonlar.addAll(dbKamyonlar);
 
             // 5. ID sayacını en büyük KRG ID'sine göre ayarla (örn: KRG1005 -> 1005)
