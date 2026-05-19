@@ -1,9 +1,5 @@
-/* ============================================
-   KargoNet — Modern Dark Theme
-   ============================================ */
 
 * {
-    /* Daha modern, okunaklı bir genel font */
     -fx-font-family: "Segoe UI", "Roboto", Helvetica, Arial, sans-serif;
 }
 
@@ -11,7 +7,6 @@
     -fx-background-color: #0b1120; /* Daha derin bir arka plan */
 }
 
-/* ===== HEADER ===== */
 .header {
     -fx-background-color: #1e293b;
     -fx-border-color: #334155;
@@ -37,7 +32,6 @@
     -fx-font-family: "Consolas", monospace; /* Versiyon numarası teknik kalsın */
 }
 
-/* ===== NAVBAR ===== */
 .navbar {
     -fx-background-color: #0f172a;
     -fx-border-color: #1e3a5f;
@@ -66,7 +60,6 @@
 .nav-btn:selected {
     -fx-background-color: #1e293b;
     -fx-text-fill: #3b82f6;
-    /* Aktif butonda altta daha kalın ve parlak bir çizgi */
     -fx-border-color: transparent transparent #3b82f6 transparent;
     -fx-border-width: 0 0 3 0;
 }
@@ -210,12 +203,60 @@
 }
 
 .form-combo {
-    -fx-background-color: #0b1120;
-    -fx-text-fill: #f8fafc;
+    -fx-background-color: #1e293b;
     -fx-border-color: #334155;
     -fx-border-width: 1.5;
     -fx-border-radius: 6;
+    -fx-background-radius: 6;
     -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+/* Seçili değer alanı */
+.form-combo .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-size: 14px;
+    -fx-padding: 6 10;
+}
+
+/* Dropdown ok butonu */
+.form-combo .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.form-combo .arrow {
+    -fx-background-color: #60a5fa;
+}
+
+/* Açılan dropdown listesi */
+.form-combo .combo-popup-background {
+    -fx-background-color: #1e293b;
+}
+
+.form-combo .list-view {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 16, 0, 0, 4);
+}
+
+.form-combo .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-size: 14px;
+    -fx-padding: 8 14;
+}
+
+.form-combo .list-view .list-cell:hover {
+    -fx-background-color: #253352;
+    -fx-text-fill: #f8fafc;
+}
+
+.form-combo .list-view .list-cell:selected {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: #ffffff;
 }
 
 /* ===== BUTTONS ===== */
@@ -403,3 +444,124 @@
     -fx-text-fill: #64748b;
     -fx-font-style: italic;
 }
+/* ===== TAB PANE (Raporlar paneli) ===== */
+.tab-pane {
+    -fx-background-color: #0f172a;
+    -fx-tab-min-height: 38px;
+}
+
+.tab-pane .tab-header-area {
+    -fx-background-color: #0f172a;
+    -fx-padding: 0;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #0f172a;
+    -fx-border-color: transparent transparent #1e3a5f transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-width: 1 1 0 1;
+    -fx-border-radius: 6 6 0 0;
+    -fx-background-radius: 6 6 0 0;
+    -fx-padding: 8 18;
+    -fx-cursor: hand;
+}
+
+.tab-pane .tab .tab-label {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.tab-pane .tab:hover .tab-label {
+    -fx-text-fill: #cbd5e1;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #253352;
+    -fx-border-color: #3b82f6 #334155 transparent #334155;
+    -fx-border-width: 2 1 0 1;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #60a5fa;
+    -fx-font-weight: 700;
+}
+
+.tab-pane .tab-content-area {
+    -fx-background-color: #0f172a;
+    -fx-border-color: #1e3a5f;
+    -fx-border-width: 0 1 1 1;
+    -fx-border-radius: 0 6 6 6;
+}
+
+/* ===== CHART (BarChart, PieChart — Raporlar) ===== */
+.chart {
+    -fx-background-color: #0f172a;
+    -fx-padding: 10;
+}
+
+.chart-plot-background {
+    -fx-background-color: #111827;
+}
+
+.chart-title {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+}
+
+/* Eksen çizgileri ve tick mark'lar */
+.axis {
+    -fx-tick-label-fill: #94a3b8;
+    -fx-font-size: 12px;
+}
+
+.axis-label {
+    -fx-text-fill: #64748b;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: #1e293b;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #1e293b;
+}
+
+.chart-alternative-row-fill {
+    -fx-fill: transparent;
+}
+
+/* BarChart — bar renkleri mavi tonları */
+.default-color0.chart-bar { -fx-bar-fill: #3b82f6; }
+.default-color1.chart-bar { -fx-bar-fill: #60a5fa; }
+.default-color2.chart-bar { -fx-bar-fill: #2563eb; }
+.default-color3.chart-bar { -fx-bar-fill: #1d4ed8; }
+
+/* PieChart renkleri */
+.default-color0.chart-pie { -fx-pie-color: #3b82f6; }
+.default-color1.chart-pie { -fx-pie-color: #06b6d4; }
+.default-color2.chart-pie { -fx-pie-color: #8b5cf6; }
+.default-color3.chart-pie { -fx-pie-color: #10b981; }
+.default-color4.chart-pie { -fx-pie-color: #f59e0b; }
+
+/* PieChart legend */
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 12px;
+}
+
+/* BarChart legend */
+.chart-legend-item-symbol.default-color0 { -fx-background-color: #3b82f6; }
+.chart-legend-item-symbol.default-color1 { -fx-background-color: #60a5fa; }
+.chart-legend-item-symbol.default-color2 { -fx-background-color: #2563eb; }
+
